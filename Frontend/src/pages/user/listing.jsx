@@ -1,26 +1,10 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import NavBar from '../../components/ui/navbar';
 import PrimaryButton from '../../components/ui/primarybutton';
 import SearchBar from '../../components/ui/searchbar';
 
-const Listing = () => {
-  const [filteredCars, setFilteredCars] = useState(null);
-  const [currentPage, setCurrentPage] = useState(1);
-  const [initialSearchTerm, setInitialSearchTerm] = useState('');
-  const carsPerPage = 6;
-
-  // Handle URL search parameters on component mount
-  useEffect(() => {
-    const urlParams = new URLSearchParams(window.location.search);
-    const searchParam = urlParams.get('search');
-    
-    if (searchParam && searchParam.trim()) {
-      setInitialSearchTerm(searchParam.trim());
-      handleSearch(searchParam.trim());
-    }
-  }, []);
-
-  const allCars = [
+// Static car data moved outside component to prevent unnecessary re-renders
+const allCars = [
     {
       id: 1,
       name: 'BMW M8 Competition',
@@ -336,8 +320,14 @@ const Listing = () => {
     }
   ];
 
-  // Search function
-  const handleSearch = (searchTerm) => {
+const Listing = () => {
+  const [filteredCars, setFilteredCars] = useState(null);
+  const [currentPage, setCurrentPage] = useState(1);
+  const [initialSearchTerm, setInitialSearchTerm] = useState('');
+  const carsPerPage = 6;
+
+  // Search function with useCallback to prevent unnecessary re-renders
+  const handleSearch = useCallback((searchTerm) => {
     if (!searchTerm.trim()) {
       setFilteredCars(null);
       setCurrentPage(1);
@@ -351,7 +341,7 @@ const Listing = () => {
     );
     setFilteredCars(filtered);
     setCurrentPage(1);
-  };
+  }, []);
 
   // Handle URL search parameters on component mount
   useEffect(() => {
@@ -362,7 +352,7 @@ const Listing = () => {
       setInitialSearchTerm(searchParam.trim());
       handleSearch(searchParam.trim());
     }
-  }, []);
+  }, [handleSearch]);
 
   const displayCars = filteredCars || allCars;
   

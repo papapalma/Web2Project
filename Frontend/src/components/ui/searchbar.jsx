@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 
 const SearchBar = ({ onSearch, initialValue = '' }) => {
   const [searchTerm, setSearchTerm] = useState(initialValue);
@@ -8,14 +8,14 @@ const SearchBar = ({ onSearch, initialValue = '' }) => {
     setSearchTerm(initialValue);
   }, [initialValue]);
 
-  const handleSearch = (e) => {
+  const handleSearch = useCallback((e) => {
     e.preventDefault();
     onSearch(searchTerm);
-  };
+  }, [onSearch, searchTerm]);
 
-  const handleInputChange = (e) => {
+  const handleInputChange = useCallback((e) => {
     setSearchTerm(e.target.value);
-  };
+  }, []);
 
   return (
     <form onSubmit={handleSearch} className="w-full max-w-xl lg:max-w-2xl mx-auto mb-6 md:mb-8">
