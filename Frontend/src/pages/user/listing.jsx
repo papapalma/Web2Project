@@ -4,7 +4,6 @@ import PrimaryButton from '../../components/ui/primarybutton';
 import SearchBar from '../../components/ui/searchbar';
 import { useNavigation } from '../../hooks/useNavigation';
 
-// Static car data moved outside component to prevent unnecessary re-renders
 const allCars = [
     {
       id: 1,
@@ -16,7 +15,8 @@ const allCars = [
       engine: '4.4L Twin-Turbo V8',
       description: 'A 617-horsepower twin-turbo V8 masterpiece — pure BMW performance and luxury.',
       image: 'https://images.unsplash.com/photo-1618843479313-40f8afb4b4d8?auto=format&fit=crop&w=800&q=80',
-      features: ['All-Wheel Drive', 'Carbon Fiber Interior', 'Sport Exhaust', 'M Performance Parts']
+      features: ['All-Wheel Drive', 'Carbon Fiber Interior', 'Sport Exhaust', 'M Performance Parts'],
+      quantity: 3
     },
     {
       id: 2,
@@ -28,7 +28,8 @@ const allCars = [
       engine: '4.8L V10',
       description: 'A legendary 563-horsepower V10 supercar — precision engineering at its finest.',
       image: 'https://wallpapers.com/images/hd/lexus-lfa-2500-x-1670-wallpaper-howld4wdtk3fjsr5.jpg',
-      features: ['Carbon Fiber Body', 'Track-Tuned Suspension', 'Limited Edition', 'Racing Heritage']
+      features: ['Carbon Fiber Body', 'Track-Tuned Suspension', 'Limited Edition', 'Racing Heritage'],
+      quantity: 1
     },
     {
       id: 3,
@@ -40,7 +41,8 @@ const allCars = [
       engine: 'Quad Electric Motors',
       description: 'An all-electric hypercar with 1,972 horsepower — the future of performance.',
       image: 'https://cafrealvolante.files.wordpress.com/2019/12/guangzhou-auto-show-lotus-evija-2.jpg',
-      features: ['All-Electric', 'Aerodynamic Design', 'Advanced Materials', 'Zero Emissions']
+      features: ['All-Electric', 'Aerodynamic Design', 'Advanced Materials', 'Zero Emissions'],
+      quantity: 2
     },
     {
       id: 4,
@@ -52,7 +54,8 @@ const allCars = [
       engine: '6.75L Twin-Turbo V12',
       description: 'The ultimate luxury SUV with unparalleled craftsmanship and comfort.',
       image: 'https://imgs.search.brave.com/WVeAayfJ8Hc4EWRqfbWusO0R8SFteMSlV6tupGXyOEw/rs:fit:860:0:0:0/g:ce/aHR0cHM6Ly93YWxs/cGFwZXJjYXQuY29t/L3cvZnVsbC81LzMv/Ny8xNzU0NTk4LTM4/NDB4MjE2MC1kZXNr/dG9wLTRrLXJvbGxz/LXJveWNlLWN1bGxp/bmFuLXdhbGxwYXBl/ci5qcGc',
-      features: ['Handcrafted Interior', 'Air Suspension', 'Starlight Headliner', 'Bespoke Options']
+      features: ['Handcrafted Interior', 'Air Suspension', 'Starlight Headliner', 'Bespoke Options'],
+      quantity: 4
     },
     {
       id: 5,
@@ -64,7 +67,8 @@ const allCars = [
       engine: '1.5L Turbo + Electric',
       description: 'A futuristic hybrid sports car that redefines sustainable performance.',
       image: 'https://imgs.search.brave.com/wXmf5XJOOOkR7ccAvqlo98F5y-X15t5RGY-TuFS0HFM/rs:fit:860:0:0:0/g:ce/aHR0cHM6Ly9pLnBp/bmltZy5jb20vb3Jp/Z2luYWxzLzM0LzA3/LzkzLzM0MDc5MzBm/ZDNhYmMyZmFlZmE2/NDVjNjhlNjE0YTMw/LmpwZw',
-      features: ['Hybrid Technology', 'Butterfly Doors', 'Carbon Fiber', 'Eco-Friendly']
+      features: ['Hybrid Technology', 'Butterfly Doors', 'Carbon Fiber', 'Eco-Friendly'],
+      quantity: 8
     },
     {
       id: 6,
@@ -76,7 +80,8 @@ const allCars = [
       engine: '5.0L V8',
       description: 'A grand tourer that blends luxury, performance, and timeless elegance.',
       image: 'https://images.unsplash.com/photo-1581540222194-0def2dda95b8?auto=format&fit=crop&w=800&q=80',
-      features: ['Premium Interior', 'Advanced Safety', 'Sport+ Mode', 'Luxury Comfort']
+      features: ['Premium Interior', 'Advanced Safety', 'Sport+ Mode', 'Luxury Comfort'],
+      quantity: 5
     },
     // Additional 20 cars
     {
@@ -89,7 +94,8 @@ const allCars = [
       engine: '4.4L Twin-Turbo V8',
       description: 'High-performance SUV combining luxury with track-ready dynamics.',
       image: 'https://imgs.search.brave.com/YZ6zOXmda1R12DVWv6D9Z4k3jDrmNaM_IRgtRzt6bH8/rs:fit:860:0:0:0/g:ce/aHR0cHM6Ly93YWxs/cGFwZXJzLmNvbS9p/bWFnZXMvaGQvYm13/LXg2LW0tcGljdHVy/ZXMtMmowMnI1czkz/dmowd3psYy5qcGc',
-      features: ['M Sport Package', 'Adaptive Suspension', 'Performance Brakes', 'Sport Seats']
+      features: ['M Sport Package', 'Adaptive Suspension', 'Performance Brakes', 'Sport Seats'],
+      quantity: 6
     },
     {
       id: 8,
@@ -101,7 +107,8 @@ const allCars = [
       engine: '3.5L Twin-Turbo V6',
       description: 'Flagship luxury sedan with exceptional comfort and advanced technology.',
       image: 'https://imgs.search.brave.com/kKe_pUOKdNIYLRN0HfyYMt7SjnoaI_lqgIsdN8jUz2E/rs:fit:860:0:0:0/g:ce/aHR0cHM6Ly9oaXBz/LmhlYXJzdGFwcHMu/Y29tL2htZy1wcm9k/L2ltYWdlcy8yMDI1/LWxleHVzLWxzLTUw/MC1mLXNwb3J0LWF3/ZC0xMDEtNjdlMzBh/YjE5YWE2MC5qcGc_/Y3JvcD0wLjYyMHh3/OjAuNTI0eGg7MC4y/ODB4dywwLjM4OXho/JnJlc2l6ZT0xMjAw/Oio',
-      features: ['Executive Package', 'Mark Levinson Audio', 'Air Suspension', 'Massage Seats']
+      features: ['Executive Package', 'Mark Levinson Audio', 'Air Suspension', 'Massage Seats'],
+      quantity: 3
     },
     {
       id: 9,
@@ -113,7 +120,8 @@ const allCars = [
       engine: '1.8L Supercharged I4',
       description: 'Pure driving experience with exceptional handling and lightweight design.',
       image: 'https://imgs.search.brave.com/GegGtoBnbc_p7ShkwQDaW2rl0PAU515KcBt900hySF8/rs:fit:860:0:0:0/g:ce/aHR0cHM6Ly9pLnBp/bmltZy5jb20vb3Jp/Z2luYWxzLzljL2My/L2I1LzljYzJiNWZm/ZGMzNDk0MGFiNGU3/NzgwYjM0OGFhZWM0/LmpwZw',
-      features: ['Lightweight Chassis', 'Track-Focused', 'Manual Transmission', 'Racing Pedigree']
+      features: ['Lightweight Chassis', 'Track-Focused', 'Manual Transmission', 'Racing Pedigree'],
+      quantity: 4
     },
     {
       id: 10,
@@ -125,7 +133,8 @@ const allCars = [
       engine: '6.8L Twin-Turbo V12',
       description: 'The pinnacle of luxury motoring with unmatched refinement.',
       image: 'https://imgs.search.brave.com/Z0GbhunJ1UV0ae2qKaHLgRov1DBcz6R8PhKwUby4Jyk/rs:fit:860:0:0:0/g:ce/aHR0cHM6Ly9tZWRp/YS5nZXR0eWltYWdl/cy5jb20vaWQvOTYy/MTc5MzIvcGhvdG8v/c2luZ2Fwb3JlLWEt/cm9sbHMtcm95Y2Ut/cGhhbnRvbS1jb3Vw/ZS1pcy10YWtlbi1v/bi1hLXRlc3QtZHJp/dmUtaW4tc2luZ2Fw/b3JlLW9uLW1vbmRh/eS1zZXB0LTE1Lmpw/Zz9zPTYxMng2MTIm/dz0wJms9MjAmYz1x/Z2l0QWNlNV9RSVRs/bnlka1FVTGZDR2Jh/dVY4eGlLLWxKNzM4/bEFpZXpnPQ',
-      features: ['Spirit of Ecstasy', 'Bespoke Interior', 'Whisper Quiet', 'Handcrafted Details']
+      features: ['Spirit of Ecstasy', 'Bespoke Interior', 'Whisper Quiet', 'Handcrafted Details'],
+      quantity: 2
     },
     {
       id: 11,
@@ -137,7 +146,8 @@ const allCars = [
       engine: '4.4L Twin-Turbo V8',
       description: 'Track-focused sedan with motorsport DNA and luxury comfort.',
       image: 'https://imgs.search.brave.com/T2QBeKBdVZZB3Lnnl6TgnOggFX1uAEjndH_pcLhvQVA/rs:fit:860:0:0:0/g:ce/aHR0cHM6Ly93YWxs/cGFwZXJhY2Nlc3Mu/Y29tL2Z1bGwvNzg0/MTg2Ny5qcGc',
-      features: ['Carbon Fiber Parts', 'Sport Suspension', 'Track Package', 'Limited Edition']
+      features: ['Carbon Fiber Parts', 'Sport Suspension', 'Track Package', 'Limited Edition'],
+      quantity: 7
     },
     {
       id: 12,
@@ -149,7 +159,8 @@ const allCars = [
       engine: '3.5L V6 Hybrid',
       description: 'Luxury hybrid SUV combining efficiency with premium comfort.',
       image: 'https://imgs.search.brave.com/6yC1-biwPKtUGKFjhnTTu5bNXFDCUtn9QVPU4IlmnPc/rs:fit:860:0:0:0/g:ce/aHR0cHM6Ly9rdmRi/aWwtaW1hZ2VzLmlt/Z2l4Lm5ldC83MjU3/NDMwLzM2MjMxNDdl/LmpwZw',
-      features: ['Hybrid Power', 'All-Wheel Drive', 'Premium Audio', 'Advanced Safety']
+      features: ['Hybrid Power', 'All-Wheel Drive', 'Premium Audio', 'Advanced Safety'],
+      quantity: 9
     },
     {
       id: 13,
@@ -161,7 +172,8 @@ const allCars = [
       engine: '3.5L Supercharged V6',
       description: 'Extreme performance car designed for track domination.',
       image: 'https://imgs.search.brave.com/5dLGAhgKqCMZlln5yPUvqwAtyQpBsqOFI1wKDj1x5Cc/rs:fit:860:0:0:0/g:ce/aHR0cHM6Ly91cGxv/YWQud2lraW1lZGlh/Lm9yZy93aWtpcGVk/aWEvY29tbW9ucy81/LzU4L0xvdHVzX0V4/aWdlX0N1cF8yNDAu/anBn',
-      features: ['Aerodynamic Package', 'Track Suspension', 'Lightweight Body', 'Racing Interior']
+      features: ['Aerodynamic Package', 'Track Suspension', 'Lightweight Body', 'Racing Interior'],
+      quantity: 3
     },
     {
       id: 14,
@@ -173,7 +185,8 @@ const allCars = [
       engine: '6.6L Twin-Turbo V12',
       description: 'Powerful grand tourer with dramatic design and luxurious appointments.',
       image: 'https://imgs.search.brave.com/ySXsJFvBF-_U2sZ9uv6AuOliROWH3AKtMuE2HEi3HzA/rs:fit:860:0:0:0/g:ce/aHR0cHM6Ly9ibG9n/LmJyYW1hbnJvbGxz/LXJveWNlcGFsbWJl/YWNoLmNvbS93cC1j/b250ZW50L3VwbG9h/ZHMvMjAyNS8wMi9S/b2xscy1Sb3ljZS1X/cmFpdGguanBn',
-      features: ['Fastback Design', 'Starlight Roof', 'Powerful V12', 'Bespoke Options']
+      features: ['Fastback Design', 'Starlight Roof', 'Powerful V12', 'Bespoke Options'],
+      quantity: 1
     },
     {
       id: 15,
@@ -185,7 +198,8 @@ const allCars = [
       engine: '3.0L Turbo I6',
       description: 'Open-air driving pleasure with sporty performance and luxury.',
       image: 'https://imgs.search.brave.com/2nA8o0AI6rstf63DWfjcEC9ZgYfPxs1oNCIrlnj7Ljg/rs:fit:860:0:0:0/g:ce/aHR0cHM6Ly9oaXBz/LmhlYXJzdGFwcHMu/Y29tL2htZy1wcm9k/L2ltYWdlcy8yMDIz/LWJtdy16NC1tNDBp/LTEzNS02NGE2Zjhj/YzE3MGE4LmpwZz9j/cm9wPTAuNjMzeHc6/MC41MzR4aDswLjIw/OHh3LDAuMjk4eGgm/cmVzaXplPTEyMDA6/Kg',
-      features: ['Convertible Top', 'Sport Package', 'M Performance', 'Premium Interior']
+      features: ['Convertible Top', 'Sport Package', 'M Performance', 'Premium Interior'],
+      quantity: 12
     },
     {
       id: 16,
@@ -197,7 +211,8 @@ const allCars = [
       engine: '5.0L V8',
       description: 'High-performance sedan with F Sport heritage and luxury comfort.',
       image: 'https://imgs.search.brave.com/jRUXOM8_sEEhYqA9UvY8L0JUszHrL3PbfEgkGYBa2pQ/rs:fit:860:0:0:0/g:ce/aHR0cHM6Ly9wcmV2/aWV3LnJlZGQuaXQv/MWp1NWZnbTh3MGo4/MS5qcGc_d2lkdGg9/NjQwJmNyb3A9c21h/cnQmYXV0bz13ZWJw/JnM9NzVlZGQzYWU3/ODQyODE5ODc5ZDk0/MjE2ZWM4YzllNmMw/ZTg0ZDkwMw',
-      features: ['F Sport Package', 'Performance Suspension', 'Track Tuning', 'Sport Interior']
+      features: ['F Sport Package', 'Performance Suspension', 'Track Tuning', 'Sport Interior'],
+      quantity: 5
     },
     {
       id: 17,
@@ -209,7 +224,8 @@ const allCars = [
       engine: '3.5L Supercharged V6',
       description: 'Modern sports car with classic Lotus DNA and contemporary luxury.',
       image: 'https://imgs.search.brave.com/0jL09L1_B-s4GMaKY5VMs7eAtPTv6tOSCzt6wH6ShE4/rs:fit:860:0:0:0/g:ce/aHR0cHM6Ly9jYXIt/aW1hZ2VzLmJhdWVy/c2VjdXJlLmNvbS93/cC1pbWFnZXMvMTMz/MzAvNDgweDI3MC9s/b3R1c19lbWlyYV9y/ZXZpZXdfY2xhcmtf/ZWRpdGlvbl8xLmpw/Zz9tb2RlPXBhZCZx/dWFsaXR5PTkw',
-      features: ['Modern Design', 'Track Performance', 'Lightweight Construction', 'Premium Materials']
+      features: ['Modern Design', 'Track Performance', 'Lightweight Construction', 'Premium Materials'],
+      quantity: 4
     },
     {
       id: 18,
@@ -221,7 +237,8 @@ const allCars = [
       engine: '6.6L Twin-Turbo V12',
       description: 'Ultra-luxury convertible offering open-air motoring at its finest.',
       image: 'https://imgs.search.brave.com/dsDXlS8qWXPcvw-Bhmo2gHP_dGyOSXMrsAjQJ1m-A_8/rs:fit:860:0:0:0/g:ce/aHR0cHM6Ly9pbWcu/Y2xhc3Npc3RhdGlj/LmRlL2FwaS92MS9t/by1wcm9kL2ltYWdl/cy9lOC9lODc5ZjRk/Mi1mZTA5LTQ2NWIt/YTQxOS1iNDliNjUx/ZWU0MDA_cnVsZT1t/by02NDAuanBn',
-      features: ['Convertible Luxury', 'Effortless Power', 'Bespoke Craftsmanship', 'Whisper Quiet']
+      features: ['Convertible Luxury', 'Effortless Power', 'Bespoke Craftsmanship', 'Whisper Quiet'],
+      quantity: 2
     },
     {
       id: 19,
@@ -434,6 +451,18 @@ const Listing = () => {
                     <div className="absolute top-3 md:top-4 right-3 md:right-4 bg-black/80 backdrop-blur-sm text-white px-3 md:px-4 py-2 rounded-lg md:rounded-xl border border-gray-600">
                       <p className="text-sm md:text-lg font-bold">₱{(car.price / 1000000).toFixed(1)}M</p>
                     </div>
+                    {/* Stock Badge */}
+                    <div className={`absolute top-3 md:top-4 left-3 md:left-4 backdrop-blur-sm px-2 md:px-3 py-1 md:py-2 rounded-lg md:rounded-xl border text-xs md:text-sm font-semibold ${
+                      (car.quantity ?? 5) > 5 
+                        ? 'bg-green-600/80 text-green-100 border-green-500' 
+                        : (car.quantity ?? 5) > 2 
+                          ? 'bg-yellow-600/80 text-yellow-100 border-yellow-500'
+                          : (car.quantity ?? 5) > 0
+                            ? 'bg-red-600/80 text-red-100 border-red-500'
+                            : 'bg-gray-600/80 text-gray-300 border-gray-500'
+                    }`}>
+                      {(car.quantity ?? 5) > 0 ? `${car.quantity ?? 5} left` : 'Sold Out'}
+                    </div>
                   </div>
                 </div>
                 
@@ -448,7 +477,7 @@ const Listing = () => {
                     <p className="text-gray-300 mb-4 md:mb-6 leading-relaxed text-sm md:text-base">{car.description}</p>
                     
                     {/* Specifications */}
-                    <div className="grid grid-cols-2 gap-3 md:gap-4 lg:gap-6 mb-4 md:mb-6">
+                    <div className="grid grid-cols-2 lg:grid-cols-3 gap-3 md:gap-4 mb-4 md:mb-6">
                       <div className="bg-gray-800/50 rounded-lg md:rounded-xl p-3 md:p-4 border border-gray-700">
                         <p className="text-xs md:text-sm text-gray-400 mb-1 font-medium">Power Output</p>
                         <p className="text-white font-bold text-sm md:text-lg">{car.horsepower} HP</p>
@@ -456,6 +485,20 @@ const Listing = () => {
                       <div className="bg-gray-800/50 rounded-lg md:rounded-xl p-3 md:p-4 border border-gray-700">
                         <p className="text-xs md:text-sm text-gray-400 mb-1 font-medium">Engine</p>
                         <p className="text-white font-bold text-sm md:text-lg">{car.engine}</p>
+                      </div>
+                      <div className="bg-gray-800/50 rounded-lg md:rounded-xl p-3 md:p-4 border border-gray-700 col-span-2 lg:col-span-1">
+                        <p className="text-xs md:text-sm text-gray-400 mb-1 font-medium">Available</p>
+                        <p className={`font-bold text-sm md:text-lg ${
+                          (car.quantity ?? 5) > 0 
+                            ? (car.quantity ?? 5) <= 3 
+                              ? 'text-yellow-400' 
+                              : 'text-green-400'
+                            : 'text-red-400'
+                        }`}>
+                          {(car.quantity ?? 5) > 0 
+                            ? `${car.quantity ?? 5} unit${(car.quantity ?? 5) > 1 ? 's' : ''}` 
+                            : 'Out of Stock'}
+                        </p>
                       </div>
                     </div>
 
@@ -479,10 +522,15 @@ const Listing = () => {
                       <p className="text-2xl md:text-3xl lg:text-4xl font-bold text-white">₱{car.price.toLocaleString()}</p>
                     </div>
                     <button
-                      onClick={() => handleOrderCar(car.name)}
-                      className="w-full sm:w-auto px-6 md:px-8 py-3 md:py-4 bg-gradient-to-r from-white to-gray-100 text-black rounded-xl md:rounded-2xl hover:from-gray-100 hover:to-white transition-all duration-300 font-bold text-sm md:text-lg shadow-lg hover:shadow-xl transform hover:scale-105 border border-gray-300 min-h-[44px]"
+                      onClick={() => (car.quantity ?? 5) > 0 ? handleOrderCar(car.name) : null}
+                      disabled={(car.quantity ?? 5) === 0}
+                      className={`w-full sm:w-auto px-6 md:px-8 py-3 md:py-4 rounded-xl md:rounded-2xl transition-all duration-300 font-bold text-sm md:text-lg shadow-lg min-h-[44px] ${
+                        (car.quantity ?? 5) > 0
+                          ? 'bg-gradient-to-r from-white to-gray-100 text-black hover:from-gray-100 hover:to-white hover:shadow-xl transform hover:scale-105 border border-gray-300'
+                          : 'bg-gray-600 text-gray-400 cursor-not-allowed border border-gray-500'
+                      }`}
                     >
-                      Order Now
+                      {(car.quantity ?? 5) > 0 ? 'Order Now' : 'Out of Stock'}
                     </button>
                   </div>
                 </div>
