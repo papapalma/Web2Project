@@ -10,9 +10,6 @@ export const useNavigation = () => {
       detail: { path }
     });
     window.dispatchEvent(navigationEvent);
-    
-    // Force page reload for now (can be replaced with proper routing later)
-    window.location.href = path;
   }, []);
 
   const getCurrentPath = useCallback(() => {
