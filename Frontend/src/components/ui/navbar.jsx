@@ -1,15 +1,22 @@
-import React, { useState } from 'react';
+import React, { useState, useCallback } from 'react';
+import { useNavigation } from '../../hooks/useNavigation';
 
 const NavBar = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
+  const { navigateTo, isCurrentPath } = useNavigation();
 
-  const toggleMenu = () => {
+  const toggleMenu = useCallback(() => {
     setIsMenuOpen(!isMenuOpen);
-  };
+  }, [isMenuOpen]);
 
-  const closeMenu = () => {
+  const closeMenu = useCallback(() => {
     setIsMenuOpen(false);
-  };
+  }, []);
+
+  const handleNavigation = useCallback((path) => {
+    navigateTo(path);
+    closeMenu();
+  }, [navigateTo, closeMenu]);
 
   return (
     <nav className="w-full bg-black shadow-2xl sticky top-0 z-50 border-b border-gray-800">
@@ -17,31 +24,35 @@ const NavBar = () => {
         {/* Logo */}
         <h1 
           className="text-xl md:text-2xl lg:text-3xl font-bold text-white cursor-pointer hover:text-gray-300 transition-colors" 
-          onClick={() => { window.location.href = '/'; closeMenu(); }}
+          onClick={() => handleNavigation('/')}
         >
           🏎️ AutoLux
         </h1>
 
         {/* Desktop Navigation */}
         <div className="hidden md:flex items-center space-x-6 lg:space-x-8">
-          <a 
-            href="/" 
-            className="text-white hover:text-gray-400 transition-colors font-medium text-base lg:text-lg"
+          <button
+            onClick={() => handleNavigation('/')}
+            className={`text-white hover:text-gray-400 transition-colors font-medium text-base lg:text-lg ${
+              isCurrentPath('/') ? 'text-gray-300 border-b border-gray-300' : ''
+            }`}
           >
             Home
-          </a>
-          <a 
-            href="/listing" 
-            className="text-white hover:text-gray-400 transition-colors font-medium text-base lg:text-lg"
+          </button>
+          <button
+            onClick={() => handleNavigation('/listing')}
+            className={`text-white hover:text-gray-400 transition-colors font-medium text-base lg:text-lg ${
+              isCurrentPath('/listing') ? 'text-gray-300 border-b border-gray-300' : ''
+            }`}
           >
             Cars
-          </a>
-          <a 
-            href="/order" 
+          </button>
+          <button
+            onClick={() => handleNavigation('/order')}
             className="px-4 lg:px-6 py-2 lg:py-3 bg-white text-black rounded-lg hover:bg-gray-200 transition-all duration-300 font-semibold text-base lg:text-lg"
           >
             Order
-          </a>
+          </button>
         </div>
 
         {/* Mobile Hamburger Button */}
@@ -75,27 +86,28 @@ const NavBar = () => {
         }`}
       >
         <div className="flex flex-col space-y-1 px-4 py-4">
-          <a 
-            href="/" 
-            onClick={closeMenu}
-            className="text-white hover:text-gray-300 hover:bg-gray-800/50 transition-all duration-200 font-medium text-lg py-3 px-4 rounded-lg"
+          <button
+            onClick={() => handleNavigation('/')}
+            className={`text-white hover:text-gray-300 hover:bg-gray-800/50 transition-all duration-200 font-medium text-lg py-3 px-4 rounded-lg text-left ${
+              isCurrentPath('/') ? 'bg-gray-800/50 text-gray-300' : ''
+            }`}
           >
             🏠 Home
-          </a>
-          <a 
-            href="/listing" 
-            onClick={closeMenu}
-            className="text-white hover:text-gray-300 hover:bg-gray-800/50 transition-all duration-200 font-medium text-lg py-3 px-4 rounded-lg"
+          </button>
+          <button
+            onClick={() => handleNavigation('/listing')}
+            className={`text-white hover:text-gray-300 hover:bg-gray-800/50 transition-all duration-200 font-medium text-lg py-3 px-4 rounded-lg text-left ${
+              isCurrentPath('/listing') ? 'bg-gray-800/50 text-gray-300' : ''
+            }`}
           >
             🚗 Cars
-          </a>
-          <a 
-            href="/order" 
-            onClick={closeMenu}
+          </button>
+          <button
+            onClick={() => handleNavigation('/order')}
             className="bg-white text-black hover:bg-gray-200 transition-all duration-200 font-semibold text-lg py-3 px-4 rounded-lg text-center mt-2"
           >
             📋 Order Now
-          </a>
+          </button>
         </div>
       </div>
     </nav>

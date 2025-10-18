@@ -2,6 +2,7 @@ import React, { useState, useEffect, useCallback } from 'react';
 import NavBar from '../../components/ui/navbar';
 import PrimaryButton from '../../components/ui/primarybutton';
 import SearchBar from '../../components/ui/searchbar';
+import { useNavigation } from '../../hooks/useNavigation';
 
 // Static car data moved outside component to prevent unnecessary re-renders
 const allCars = [
@@ -325,6 +326,7 @@ const Listing = () => {
   const [currentPage, setCurrentPage] = useState(1);
   const [initialSearchTerm, setInitialSearchTerm] = useState('');
   const carsPerPage = 6;
+  const { navigateTo } = useNavigation();
 
   // Search function with useCallback to prevent unnecessary re-renders
   const handleSearch = useCallback((searchTerm) => {
@@ -362,14 +364,14 @@ const Listing = () => {
   const endIndex = startIndex + carsPerPage;
   const currentCars = displayCars.slice(startIndex, endIndex);
 
-  const handlePageChange = (pageNumber) => {
+  const handlePageChange = useCallback((pageNumber) => {
     setCurrentPage(pageNumber);
     window.scrollTo({ top: 0, behavior: 'smooth' });
-  };
+  }, []);
 
-  const handleOrderCar = (carName) => {
-    window.location.href = `/order?car=${encodeURIComponent(carName)}`;
-  };
+  const handleOrderCar = useCallback((carName) => {
+    navigateTo(`/order?car=${encodeURIComponent(carName)}`);
+  }, [navigateTo]);
 
   return (
     <div className="bg-gradient-to-br from-black via-gray-900 to-black min-h-screen w-full text-white overflow-x-hidden">
@@ -601,7 +603,7 @@ const Listing = () => {
         <div className="text-center">
           <PrimaryButton
             label="← Back to Home"
-            onClick={() => window.location.href = '/'}
+            onClick={() => navigateTo('/')}
             type="outline"
           />
         </div>

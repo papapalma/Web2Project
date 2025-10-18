@@ -1,32 +1,32 @@
-import React, { useState } from 'react';
+import React, { useState, useCallback } from 'react';
 import NavBar from '../../components/ui/navbar';
 import PrimaryButton from '../../components/ui/primarybutton';
 import Card from '../../components/ui/card';
 import SearchBar from '../../components/ui/searchbar';
+import { useNavigation } from '../../hooks/useNavigation';
 
 const LandingPage = () => {
   const [searchTerm, setSearchTerm] = useState('');
+  const { navigateTo } = useNavigation();
 
-  // Define navigation functions
-  const handleExplore = () => {
-    // Navigate to car listing page
-    window.location.href = '/listing';
-  };
+  // Define navigation functions using hooks
+  const handleExplore = useCallback(() => {
+    navigateTo('/listing');
+  }, [navigateTo]);
 
-  const handleOrder = () => {
-    // Navigate to order page
-    window.location.href = '/order';
-  };
+  const handleOrder = useCallback(() => {
+    navigateTo('/order');
+  }, [navigateTo]);
 
-  const handleSearch = (searchQuery) => {
+  const handleSearch = useCallback((searchQuery) => {
     if (searchQuery && searchQuery.trim()) {
       // Navigate to listing page with search term
-      window.location.href = `/listing?search=${encodeURIComponent(searchQuery.trim())}`;
+      navigateTo(`/listing?search=${encodeURIComponent(searchQuery.trim())}`);
     } else {
       // If empty search, just go to listing page
-      window.location.href = '/listing';
+      navigateTo('/listing');
     }
-  };
+  }, [navigateTo]);
 
   return (
     <div className="bg-black min-h-screen w-full text-white overflow-x-hidden">

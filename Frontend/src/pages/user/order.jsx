@@ -1,8 +1,10 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import NavBar from '../../components/ui/navbar';
 import PrimaryButton from '../../components/ui/primarybutton';
+import { useNavigation } from '../../hooks/useNavigation';
 
 const Order = () => {
+  const { navigateTo } = useNavigation();
   const [formData, setFormData] = useState({
     name: '',
     email: '',
@@ -361,7 +363,7 @@ const Order = () => {
                     </button>
                     <button
                       type="button"
-                      onClick={() => window.location.href = '/listing'}
+                      onClick={() => navigateTo('/listing')}
                       className="px-6 lg:px-8 py-4 lg:py-5 bg-gray-800/80 text-white rounded-xl lg:rounded-2xl border-2 border-gray-600 hover:bg-gray-700/80 hover:border-gray-500 transition-all duration-300 font-semibold text-base lg:text-lg backdrop-blur-sm"
                     >
                       ← Back to Cars
