@@ -3,6 +3,8 @@ import NavBar from '../../components/ui/navbar';
 import PrimaryButton from '../../components/ui/primarybutton';
 import SearchBar from '../../components/ui/searchbar';
 import { useNavigation } from '../../hooks/useNavigation';
+import Modal from '../../components/ui/Modal';
+import SidePanel from '../../components/ui/SidePanel';
 
 const allCars = [
     {
@@ -342,8 +344,20 @@ const Listing = () => {
   const [filteredCars, setFilteredCars] = useState(null);
   const [currentPage, setCurrentPage] = useState(1);
   const [initialSearchTerm, setInitialSearchTerm] = useState('');
+  const [selectedCar, setSelectedCar] = useState(null);
+  const [isMobile, setIsMobile] = useState(false);
   const carsPerPage = 6;
   const { navigateTo } = useNavigation();
+
+  // Detect screen size
+  React.useEffect(() => {
+    const checkMobile = () => {
+      setIsMobile(window.innerWidth < 768);
+    };
+    checkMobile();
+    window.addEventListener('resize', checkMobile);
+    return () => window.removeEventListener('resize', checkMobile);
+  }, []);
 
   // Search function with useCallback to prevent unnecessary re-renders
   const handleSearch = useCallback((searchTerm) => {
@@ -425,116 +439,19 @@ const Listing = () => {
         </div>
 
         {/* Car Grid */}
-        <div className="w-full grid grid-cols-1 lg:grid-cols-2 gap-6 md:gap-8 lg:gap-10 mb-12 md:mb-16">
+        <div className="w-full grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 md:gap-8 mb-12 md:mb-16">
           {currentCars.map((car, index) => (
             <div 
-              key={car.id} 
-              className="group relative bg-gradient-to-br from-gray-900/80 via-gray-800/60 to-gray-900/80 backdrop-blur-sm rounded-2xl md:rounded-3xl p-4 md:p-6 lg:p-8 border border-gray-700/50 hover:border-gray-500/50 transition-all duration-700 hover:transform hover:scale-[1.02] hover:shadow-2xl hover:shadow-white/5 mx-4 md:mx-0"
-              style={{
-                animationDelay: `${index * 100}ms`
-              }}
+              key={car.id}
+              onClick={() => setSelectedCar(car)}
+              className="bg-gradient-to-b from-gray-900 to-black rounded-2xl p-4 hover:transform hover:scale-105 transition-all duration-500 shadow-2xl border border-gray-800 hover:border-gray-600 cursor-pointer group mx-4 md:mx-0"
             >
-              {/* Hover Glow Effect */}
-              <div className="absolute inset-0 rounded-2xl md:rounded-3xl bg-gradient-to-br from-white/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-700"></div>
-              
-              <div className="relative z-10 flex flex-col gap-6 md:gap-8">
-                {/* Car Image */}
-                <div className="w-full">
-                  <div className="relative overflow-hidden rounded-xl md:rounded-2xl">
-                    <img
-                      src={car.image}
-                      alt={car.name}
-                      className="w-full h-48 sm:h-56 md:h-64 lg:h-72 object-cover transition-transform duration-700 group-hover:scale-110"
-                    />
-                    <div className="absolute inset-0 bg-gradient-to-t from-black/40 to-transparent"></div>
-                    {/* Price Badge */}
-                    <div className="absolute top-3 md:top-4 right-3 md:right-4 bg-black/80 backdrop-blur-sm text-white px-3 md:px-4 py-2 rounded-lg md:rounded-xl border border-gray-600">
-                      <p className="text-sm md:text-lg font-bold">₱{(car.price / 1000000).toFixed(1)}M</p>
-                    </div>
-                    {/* Stock Badge */}
-                    <div className={`absolute top-3 md:top-4 left-3 md:left-4 backdrop-blur-sm px-2 md:px-3 py-1 md:py-2 rounded-lg md:rounded-xl border text-xs md:text-sm font-semibold ${
-                      (car.quantity ?? 5) > 5 
-                        ? 'bg-green-600/80 text-green-100 border-green-500' 
-                        : (car.quantity ?? 5) > 2 
-                          ? 'bg-yellow-600/80 text-yellow-100 border-yellow-500'
-                          : (car.quantity ?? 5) > 0
-                            ? 'bg-red-600/80 text-red-100 border-red-500'
-                            : 'bg-gray-600/80 text-gray-300 border-gray-500'
-                    }`}>
-                      {(car.quantity ?? 5) > 0 ? `${car.quantity ?? 5} left` : 'Sold Out'}
-                    </div>
-                  </div>
-                </div>
-                
-                {/* Car Details */}
-                <div className="w-full flex flex-col justify-between">
-                  <div>
-                    <div className="flex flex-wrap items-center gap-2 md:gap-3 mb-3 md:mb-4">
-                      <span className="text-xs md:text-sm text-gray-200 bg-gradient-to-r from-gray-700 to-gray-800 px-3 md:px-4 py-1 md:py-2 rounded-full border border-gray-600 font-medium">{car.brand}</span>
-                      <span className="text-xs md:text-sm text-gray-200 bg-gradient-to-r from-gray-700 to-gray-800 px-3 md:px-4 py-1 md:py-2 rounded-full border border-gray-600 font-medium">{car.type}</span>
-                    </div>
-                    <h3 className="text-xl md:text-2xl lg:text-3xl font-bold text-white mb-3 md:mb-4 group-hover:text-gray-100 transition-colors duration-300">{car.name}</h3>
-                    <p className="text-gray-300 mb-4 md:mb-6 leading-relaxed text-sm md:text-base">{car.description}</p>
-                    
-                    {/* Specifications */}
-                    <div className="grid grid-cols-2 lg:grid-cols-3 gap-3 md:gap-4 mb-4 md:mb-6">
-                      <div className="bg-gray-800/50 rounded-lg md:rounded-xl p-3 md:p-4 border border-gray-700">
-                        <p className="text-xs md:text-sm text-gray-400 mb-1 font-medium">Power Output</p>
-                        <p className="text-white font-bold text-sm md:text-lg">{car.horsepower} HP</p>
-                      </div>
-                      <div className="bg-gray-800/50 rounded-lg md:rounded-xl p-3 md:p-4 border border-gray-700">
-                        <p className="text-xs md:text-sm text-gray-400 mb-1 font-medium">Engine</p>
-                        <p className="text-white font-bold text-sm md:text-lg">{car.engine}</p>
-                      </div>
-                      <div className="bg-gray-800/50 rounded-lg md:rounded-xl p-3 md:p-4 border border-gray-700 col-span-2 lg:col-span-1">
-                        <p className="text-xs md:text-sm text-gray-400 mb-1 font-medium">Available</p>
-                        <p className={`font-bold text-sm md:text-lg ${
-                          (car.quantity ?? 5) > 0 
-                            ? (car.quantity ?? 5) <= 3 
-                              ? 'text-yellow-400' 
-                              : 'text-green-400'
-                            : 'text-red-400'
-                        }`}>
-                          {(car.quantity ?? 5) > 0 
-                            ? `${car.quantity ?? 5} unit${(car.quantity ?? 5) > 1 ? 's' : ''}` 
-                            : 'Out of Stock'}
-                        </p>
-                      </div>
-                    </div>
-
-                    {/* Features */}
-                    <div className="mb-4 md:mb-6">
-                      <p className="text-xs md:text-sm text-gray-400 mb-2 md:mb-3 font-medium">Premium Features</p>
-                      <div className="flex flex-wrap gap-1 md:gap-2">
-                        {car.features.map((feature, index) => (
-                          <span key={index} className="text-xs md:text-sm text-gray-200 bg-gradient-to-r from-gray-800 to-gray-700 px-2 md:px-3 py-1 md:py-2 rounded-md md:rounded-lg border border-gray-600 hover:border-gray-500 transition-colors duration-300">
-                            {feature}
-                          </span>
-                        ))}
-                      </div>
-                    </div>
-                  </div>
-
-                  {/* Price and Order Button */}
-                  <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between pt-4 border-t border-gray-700 gap-3 sm:gap-0">
-                    <div>
-                      <p className="text-xs md:text-sm text-gray-400 mb-1">Starting at</p>
-                      <p className="text-2xl md:text-3xl lg:text-4xl font-bold text-white">₱{car.price.toLocaleString()}</p>
-                    </div>
-                    <button
-                      onClick={() => (car.quantity ?? 5) > 0 ? handleOrderCar(car.name) : null}
-                      disabled={(car.quantity ?? 5) === 0}
-                      className={`w-full sm:w-auto px-6 md:px-8 py-3 md:py-4 rounded-xl md:rounded-2xl transition-all duration-300 font-bold text-sm md:text-lg shadow-lg min-h-[44px] ${
-                        (car.quantity ?? 5) > 0
-                          ? 'bg-gradient-to-r from-white to-gray-100 text-black hover:from-gray-100 hover:to-white hover:shadow-xl transform hover:scale-105 border border-gray-300'
-                          : 'bg-gray-600 text-gray-400 cursor-not-allowed border border-gray-500'
-                      }`}
-                    >
-                      {(car.quantity ?? 5) > 0 ? 'Order Now' : 'Out of Stock'}
-                    </button>
-                  </div>
-                </div>
-              </div>
+              <img
+                src={car.image}
+                alt={car.name}
+                className="w-full h-48 object-cover rounded-xl mb-4 group-hover:opacity-90 transition-opacity"
+              />
+              <h4 className="text-xl font-bold text-white text-center">{car.name}</h4>
             </div>
           ))}
         </div>
@@ -662,6 +579,208 @@ const Listing = () => {
           © 2025 AutoLux Premium — Luxury Car Edition.
         </p>
       </footer>
+
+      {/* Car Details - Modal on Desktop, Bottom Sheet on Mobile */}
+      {!isMobile ? (
+        <Modal 
+          isOpen={selectedCar !== null} 
+          onClose={() => setSelectedCar(null)} 
+          title={selectedCar?.name || "Car Details"}
+        >
+          {selectedCar && (
+            <div className="space-y-6 max-h-[70vh] overflow-y-auto">
+              <img
+                src={selectedCar.image}
+                alt={selectedCar.name}
+                className="w-full h-48 md:h-64 object-cover rounded-lg"
+              />
+              <div className="space-y-4">
+                <p className="text-gray-300 text-base md:text-lg leading-relaxed">{selectedCar.description}</p>
+                <p className="text-2xl md:text-3xl font-bold text-white">₱{selectedCar.price.toLocaleString()}</p>
+                
+                <div className="space-y-3">
+                  <h4 className="text-lg md:text-xl font-semibold text-white border-b border-gray-700 pb-2">Specifications</h4>
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+                    <div className="bg-gray-800/50 p-3 rounded-lg border border-gray-700">
+                      <div className="text-gray-400 text-xs md:text-sm">Engine</div>
+                      <div className="text-white font-medium text-sm md:text-base mt-1">{selectedCar.engine}</div>
+                    </div>
+                    <div className="bg-gray-800/50 p-3 rounded-lg border border-gray-700">
+                      <div className="text-gray-400 text-xs md:text-sm">Power Output</div>
+                      <div className="text-white font-medium text-sm md:text-base mt-1">{selectedCar.horsepower} HP</div>
+                    </div>
+                    <div className="bg-gray-800/50 p-3 rounded-lg border border-gray-700">
+                      <div className="text-gray-400 text-xs md:text-sm">Type</div>
+                      <div className="text-white font-medium text-sm md:text-base mt-1">{selectedCar.type}</div>
+                    </div>
+                    <div className="bg-gray-800/50 p-3 rounded-lg border border-gray-700">
+                      <div className="text-gray-400 text-xs md:text-sm">Brand</div>
+                      <div className="text-white font-medium text-sm md:text-base mt-1">{selectedCar.brand}</div>
+                    </div>
+                    {selectedCar.quantity !== undefined && (
+                      <div className="bg-gray-800/50 p-3 rounded-lg border border-gray-700 col-span-1 md:col-span-2">
+                        <div className="text-gray-400 text-xs md:text-sm">Availability</div>
+                        <div className={`font-medium text-sm md:text-base mt-1 ${
+                          selectedCar.quantity > 0 
+                            ? selectedCar.quantity <= 3 
+                              ? 'text-yellow-400' 
+                              : 'text-green-400'
+                            : 'text-red-400'
+                        }`}>
+                          {selectedCar.quantity > 0 
+                            ? `${selectedCar.quantity} unit${selectedCar.quantity > 1 ? 's' : ''} available` 
+                            : 'Out of Stock'}
+                        </div>
+                      </div>
+                    )}
+                  </div>
+                </div>
+
+                {selectedCar.features && (
+                  <div className="space-y-3">
+                    <h4 className="text-lg md:text-xl font-semibold text-white border-b border-gray-700 pb-2">Premium Features</h4>
+                    <div className="flex flex-wrap gap-2">
+                      {selectedCar.features.map((feature, index) => (
+                        <span 
+                          key={index} 
+                          className="text-xs md:text-sm text-gray-200 bg-gradient-to-r from-gray-800 to-gray-700 px-3 py-2 rounded-lg border border-gray-600"
+                        >
+                          {feature}
+                        </span>
+                      ))}
+                    </div>
+                  </div>
+                )}
+                
+                <div className="flex gap-3 pt-4 border-t border-gray-700">
+                  <button
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      if (selectedCar.quantity > 0) {
+                        handleOrderCar(selectedCar.name);
+                      }
+                    }}
+                    disabled={selectedCar.quantity === 0}
+                    className={`flex-1 py-3 rounded-lg transition-all duration-300 font-semibold text-sm md:text-base ${
+                      selectedCar.quantity > 0
+                        ? 'bg-white text-black hover:bg-gray-200'
+                        : 'bg-gray-600 text-gray-400 cursor-not-allowed'
+                    }`}
+                  >
+                    {selectedCar.quantity > 0 ? 'Order Now' : 'Out of Stock'}
+                  </button>
+                  <button
+                    onClick={() => setSelectedCar(null)}
+                    className="flex-1 py-3 bg-gray-800 text-white rounded-lg hover:bg-gray-700 transition-all duration-300 font-semibold text-sm md:text-base border border-gray-600"
+                  >
+                    Close
+                  </button>
+                </div>
+              </div>
+            </div>
+          )}
+        </Modal>
+      ) : (
+        <SidePanel 
+          isOpen={selectedCar !== null} 
+          onClose={() => setSelectedCar(null)}
+          title={selectedCar?.name || "Car Details"}
+          isMobileBottomSheet={true}
+        >
+          {selectedCar && (
+            <div className="space-y-4">
+              <img
+                src={selectedCar.image}
+                alt={selectedCar.name}
+                className="w-full h-48 object-cover rounded-lg"
+              />
+              <div className="space-y-4">
+                <p className="text-gray-300 text-base leading-relaxed">{selectedCar.description}</p>
+                <p className="text-2xl font-bold text-white">₱{selectedCar.price.toLocaleString()}</p>
+                
+                <div className="space-y-3">
+                  <h4 className="text-lg font-semibold text-white border-b border-gray-700 pb-2">Specifications</h4>
+                  <div className="grid grid-cols-2 gap-2">
+                    <div className="bg-gray-800/50 p-2.5 rounded-lg border border-gray-700">
+                      <div className="text-gray-400 text-xs">Engine</div>
+                      <div className="text-white font-medium text-sm mt-1">{selectedCar.engine}</div>
+                    </div>
+                    <div className="bg-gray-800/50 p-2.5 rounded-lg border border-gray-700">
+                      <div className="text-gray-400 text-xs">Power</div>
+                      <div className="text-white font-medium text-sm mt-1">{selectedCar.horsepower} HP</div>
+                    </div>
+                    <div className="bg-gray-800/50 p-2.5 rounded-lg border border-gray-700">
+                      <div className="text-gray-400 text-xs">Type</div>
+                      <div className="text-white font-medium text-sm mt-1">{selectedCar.type}</div>
+                    </div>
+                    <div className="bg-gray-800/50 p-2.5 rounded-lg border border-gray-700">
+                      <div className="text-gray-400 text-xs">Brand</div>
+                      <div className="text-white font-medium text-sm mt-1">{selectedCar.brand}</div>
+                    </div>
+                    {selectedCar.quantity !== undefined && (
+                      <div className="bg-gray-800/50 p-2.5 rounded-lg border border-gray-700 col-span-2">
+                        <div className="text-gray-400 text-xs">Availability</div>
+                        <div className={`font-medium text-sm mt-1 ${
+                          selectedCar.quantity > 0 
+                            ? selectedCar.quantity <= 3 
+                              ? 'text-yellow-400' 
+                              : 'text-green-400'
+                            : 'text-red-400'
+                        }`}>
+                          {selectedCar.quantity > 0 
+                            ? `${selectedCar.quantity} unit${selectedCar.quantity > 1 ? 's' : ''} available` 
+                            : 'Out of Stock'}
+                        </div>
+                      </div>
+                    )}
+                  </div>
+                </div>
+
+                {selectedCar.features && (
+                  <div className="space-y-3">
+                    <h4 className="text-lg font-semibold text-white border-b border-gray-700 pb-2">Premium Features</h4>
+                    <div className="flex flex-wrap gap-2">
+                      {selectedCar.features.map((feature, index) => (
+                        <span 
+                          key={index} 
+                          className="text-xs text-gray-200 bg-gradient-to-r from-gray-800 to-gray-700 px-2.5 py-1.5 rounded-lg border border-gray-600"
+                        >
+                          {feature}
+                        </span>
+                      ))}
+                    </div>
+                  </div>
+                )}
+                
+                <div className="flex gap-3 pt-4 border-t border-gray-700 sticky bottom-0 bg-gray-900 pb-4">
+                  <button
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      if (selectedCar.quantity > 0) {
+                        handleOrderCar(selectedCar.name);
+                      }
+                    }}
+                    disabled={selectedCar.quantity === 0}
+                    className={`flex-1 py-3 rounded-lg transition-all duration-300 font-semibold ${
+                      selectedCar.quantity > 0
+                        ? 'bg-white text-black hover:bg-gray-200'
+                        : 'bg-gray-600 text-gray-400 cursor-not-allowed'
+                    }`}
+                  >
+                    {selectedCar.quantity > 0 ? 'Order Now' : 'Out of Stock'}
+                  </button>
+                  <button
+                    onClick={() => setSelectedCar(null)}
+                    className="flex-1 py-3 bg-gray-800 text-white rounded-lg hover:bg-gray-700 transition-all duration-300 font-semibold border border-gray-600"
+                  >
+                    Close
+                  </button>
+                </div>
+              </div>
+            </div>
+          )}
+        </SidePanel>
+      )}
     </div>
   );
 };

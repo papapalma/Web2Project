@@ -4,6 +4,8 @@ import PrimaryButton from '../../components/ui/primarybutton';
 import Card from '../../components/ui/card';
 import SearchBar from '../../components/ui/searchbar';
 import { useNavigation } from '../../hooks/useNavigation';
+import Modal from '../../components/ui/Modal';
+import SidePanel from '../../components/ui/SidePanel';
 
 const LandingPage = () => {
   const [searchTerm, setSearchTerm] = useState('');
@@ -28,8 +30,129 @@ const LandingPage = () => {
     }
   }, [navigateTo]);
 
+  // UI state for modal and side panel
+  const [selectedCar, setSelectedCar] = useState(null);
+  const [isPanelOpen, setIsPanelOpen] = useState(false);
+  const [isMobile, setIsMobile] = useState(false);
+
+  // Detect screen size
+  React.useEffect(() => {
+    const checkMobile = () => {
+      setIsMobile(window.innerWidth < 768);
+    };
+    checkMobile();
+    window.addEventListener('resize', checkMobile);
+    return () => window.removeEventListener('resize', checkMobile);
+  }, []);
+
+  // Car data with detailed specs
+  const carData = [
+    {
+      id: 1,
+      name: "BMW M8 Competition",
+      image: "https://images.unsplash.com/photo-1555215695-3004980ad54e?auto=format&fit=crop&w=800&q=80",
+      description: "A 617-horsepower twin-turbo V8 masterpiece — pure BMW performance and luxury.",
+      price: 15500000,
+      specs: {
+        engine: "4.4L Twin-Turbo V8",
+        power: "617 hp",
+        torque: "553 lb-ft",
+        acceleration: "0-60 mph in 3.0s",
+        topSpeed: "190 mph (limited)",
+        transmission: "8-speed M Steptronic",
+        drivetrain: "M xDrive AWD"
+      },
+      features: ['All-Wheel Drive', 'Carbon Fiber Interior', 'Sport Exhaust', 'M Performance Parts']
+    },
+    {
+      id: 2,
+      name: "Lexus LFA",
+      image: "https://images.unsplash.com/photo-1619767886558-efdc259cde1a?auto=format&fit=crop&w=800&q=80",
+      description: "A legendary 563-horsepower V10 supercar — precision engineering at its finest.",
+      price: 45000000,
+      specs: {
+        engine: "4.8L V10",
+        power: "563 hp",
+        torque: "354 lb-ft",
+        acceleration: "0-60 mph in 3.6s",
+        topSpeed: "202 mph",
+        transmission: "6-speed Automated Sequential",
+        drivetrain: "RWD"
+      },
+      features: ['Carbon Fiber Body', 'Track-Tuned Suspension', 'Limited Edition', 'Racing Heritage']
+    },
+    {
+      id: 3,
+      name: "Lotus Evija",
+      image: "https://images.unsplash.com/photo-1544636331-e26879cd4d9b?auto=format&fit=crop&w=800&q=80",
+      description: "An all-electric hypercar with 1,972 horsepower — the future of performance.",
+      price: 125000000,
+      specs: {
+        power: "1,972 hp",
+        torque: "1,254 lb-ft",
+        acceleration: "0-60 mph in < 3.0s",
+        topSpeed: "200+ mph",
+        range: "250 miles (est.)",
+        batteryCapacity: "70 kWh",
+        motors: "4 electric motors"
+      },
+      features: ['All-Electric', 'Aerodynamic Design', 'Advanced Materials', 'Zero Emissions']
+    },
+    {
+      id: 4,
+      name: "Rolls Royce Cullinan",
+      image: "https://images.unsplash.com/photo-1618843479313-40f8afb4b4d8?auto=format&fit=crop&w=800&q=80",
+      description: "The ultimate luxury SUV with unparalleled craftsmanship and comfort.",
+      price: 32000000,
+      specs: {
+        engine: "6.75L Twin-Turbo V12",
+        power: "563 hp",
+        torque: "627 lb-ft",
+        acceleration: "0-60 mph in 4.5s",
+        transmission: "8-speed ZF",
+        drivetrain: "AWD",
+        groundClearance: "9.1 inches"
+      },
+      features: ['Handcrafted Interior', 'Air Suspension', 'Starlight Headliner', 'Bespoke Options']
+    },
+    {
+      id: 5,
+      name: "BMW i8",
+      image: "https://images.unsplash.com/photo-1542362567-b07e54358753?auto=format&fit=crop&w=800&q=80",
+      description: "A futuristic hybrid sports car that redefines sustainable performance.",
+      price: 18000000,
+      specs: {
+        powerSystem: "Hybrid (3-cyl + Electric)",
+        combinedPower: "369 hp",
+        acceleration: "0-60 mph in 4.2s",
+        electricRange: "23 miles",
+        batteryCapacity: "11.6 kWh",
+        construction: "Carbon Fiber",
+        transmission: "6-speed automatic"
+      },
+      features: ['Hybrid Technology', 'Butterfly Doors', 'Carbon Fiber', 'Eco-Friendly']
+    },
+    {
+      id: 6,
+      name: "Lexus LC 500",
+      image: "https://images.unsplash.com/photo-1580273916550-e323be2ae537?auto=format&fit=crop&w=800&q=80",
+      description: "A grand tourer that blends luxury, performance, and timeless elegance.",
+      price: 12500000,
+      specs: {
+        engine: "5.0L V8",
+        power: "471 hp",
+        torque: "398 lb-ft",
+        acceleration: "0-60 mph in 4.4s",
+        transmission: "10-speed Direct-Shift",
+        drivetrain: "RWD",
+        suspension: "Adaptive Variable Suspension"
+      },
+      features: ['Premium Interior', 'Advanced Safety', 'Sport+ Mode', 'Luxury Comfort']
+    }
+  ];
+
   return (
-    <div className="bg-black min-h-screen w-full text-white overflow-x-hidden">
+    <div className="bg-black min-h-screen w-full text-white overflow-x-hidden with-mobile-footer">
       {/* Navbar */}
       <NavBar />
 
@@ -94,125 +217,20 @@ const LandingPage = () => {
           </div>
 
           <div className="w-full grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 md:gap-8">
-            {/* BMW M8 Competition */}
-            <div className="bg-gradient-to-b from-gray-900 to-black rounded-2xl md:rounded-3xl p-4 md:p-6 hover:transform hover:scale-105 transition-all duration-500 shadow-2xl border border-gray-800 hover:border-gray-600">
-              <img
-                src="https://images.unsplash.com/photo-1555215695-3004980ad54e?auto=format&fit=crop&w=800&q=80"
-                alt="BMW M8 Competition"
-                className="w-full h-40 md:h-48 object-cover rounded-xl md:rounded-2xl mb-4 md:mb-6"
-              />
-              <h4 className="text-lg md:text-2xl font-bold text-white mb-2 md:mb-3">BMW M8 Competition</h4>
-              <p className="text-sm md:text-base text-gray-400 mb-3 md:mb-4 leading-relaxed">
-                A 617-horsepower twin-turbo V8 masterpiece — pure BMW performance and luxury.
-              </p>
-              <p className="text-xl md:text-3xl font-bold text-white mb-3 md:mb-4">₱15,500,000</p>
-              <button
-                onClick={handleOrder}
-                className="w-full py-3 bg-white text-black rounded-xl hover:bg-gray-200 transition-all duration-300 font-semibold text-sm md:text-base"
+            {carData.map((car) => (
+              <div 
+                key={car.id}
+                onClick={() => setSelectedCar(car)}
+                className="bg-gradient-to-b from-gray-900 to-black rounded-2xl p-4 hover:transform hover:scale-105 transition-all duration-500 shadow-2xl border border-gray-800 hover:border-gray-600 cursor-pointer group"
               >
-                Order Now
-              </button>
-            </div>
-
-            {/* Lexus LFA */}
-            <div className="bg-gradient-to-b from-gray-900 to-black rounded-2xl md:rounded-3xl p-4 md:p-6 hover:transform hover:scale-105 transition-all duration-500 shadow-2xl border border-gray-800 hover:border-gray-600">
-              <img
-                src="https://images.unsplash.com/photo-1619767886558-efdc259cde1a?auto=format&fit=crop&w=800&q=80"
-                alt="Lexus LFA"
-                className="w-full h-40 md:h-48 object-cover rounded-xl md:rounded-2xl mb-4 md:mb-6"
-              />
-              <h4 className="text-lg md:text-2xl font-bold text-white mb-2 md:mb-3">Lexus LFA</h4>
-              <p className="text-sm md:text-base text-gray-400 mb-3 md:mb-4 leading-relaxed">
-                A legendary 563-horsepower V10 supercar — precision engineering at its finest.
-              </p>
-              <p className="text-xl md:text-3xl font-bold text-white mb-3 md:mb-4">₱45,000,000</p>
-              <button
-                onClick={handleOrder}
-                className="w-full py-3 bg-white text-black rounded-xl hover:bg-gray-200 transition-all duration-300 font-semibold text-sm md:text-base"
-              >
-                Order Now
-              </button>
-            </div>
-
-            {/* Lotus Evija */}
-            <div className="bg-gradient-to-b from-gray-900 to-black rounded-2xl md:rounded-3xl p-4 md:p-6 hover:transform hover:scale-105 transition-all duration-500 shadow-2xl border border-gray-800 hover:border-gray-600 sm:col-span-2 lg:col-span-1">
-              <img
-                src="https://images.unsplash.com/photo-1544636331-e26879cd4d9b?auto=format&fit=crop&w=800&q=80"
-                alt="Lotus Evija"
-                className="w-full h-40 md:h-48 object-cover rounded-xl md:rounded-2xl mb-4 md:mb-6"
-              />
-              <h4 className="text-lg md:text-2xl font-bold text-white mb-2 md:mb-3">Lotus Evija</h4>
-              <p className="text-sm md:text-base text-gray-400 mb-3 md:mb-4 leading-relaxed">
-                An all-electric hypercar with 1,972 horsepower — the future of performance.
-              </p>
-              <p className="text-xl md:text-3xl font-bold text-white mb-3 md:mb-4">₱125,000,000</p>
-              <button
-                onClick={handleOrder}
-                className="w-full py-3 bg-white text-black rounded-xl hover:bg-gray-200 transition-all duration-300 font-semibold text-sm md:text-base"
-              >
-                Order Now
-              </button>
-            </div>
-
-            {/* Rolls Royce Cullinan */}
-            <div className="bg-gradient-to-b from-gray-900 to-black rounded-3xl p-6 hover:transform hover:scale-105 transition-all duration-500 shadow-2xl border border-gray-800 hover:border-gray-600">
-              <img
-                src="https://images.unsplash.com/photo-1618843479313-40f8afb4b4d8?auto=format&fit=crop&w=800&q=80"
-                alt="Rolls Royce Cullinan"
-                className="w-full h-48 object-cover rounded-2xl mb-6"
-              />
-              <h4 className="text-2xl font-bold text-white mb-3">Rolls Royce Cullinan</h4>
-              <p className="text-gray-400 mb-4 leading-relaxed">
-                The ultimate luxury SUV with unparalleled craftsmanship and comfort.
-              </p>
-              <p className="text-3xl font-bold text-white mb-4">₱32,000,000</p>
-              <button
-                onClick={handleOrder}
-                className="w-full py-3 bg-white text-black rounded-xl hover:bg-gray-200 transition-all duration-300 font-semibold"
-              >
-                Order Now
-              </button>
-            </div>
-
-            {/* BMW i8 */}
-            <div className="bg-gradient-to-b from-gray-900 to-black rounded-3xl p-6 hover:transform hover:scale-105 transition-all duration-500 shadow-2xl border border-gray-800 hover:border-gray-600">
-              <img
-                src="https://images.unsplash.com/photo-1542362567-b07e54358753?auto=format&fit=crop&w=800&q=80"
-                alt="BMW i8"
-                className="w-full h-48 object-cover rounded-2xl mb-6"
-              />
-              <h4 className="text-2xl font-bold text-white mb-3">BMW i8</h4>
-              <p className="text-gray-400 mb-4 leading-relaxed">
-                A futuristic hybrid sports car that redefines sustainable performance.
-              </p>
-              <p className="text-3xl font-bold text-white mb-4">₱18,000,000</p>
-              <button
-                onClick={handleOrder}
-                className="w-full py-3 bg-white text-black rounded-xl hover:bg-gray-200 transition-all duration-300 font-semibold"
-              >
-                Order Now
-              </button>
-            </div>
-
-            {/* Lexus LC 500 */}
-            <div className="bg-gradient-to-b from-gray-900 to-black rounded-3xl p-6 hover:transform hover:scale-105 transition-all duration-500 shadow-2xl border border-gray-800 hover:border-gray-600">
-              <img
-                src="https://images.unsplash.com/photo-1580273916550-e323be2ae537?auto=format&fit=crop&w=800&q=80"
-                alt="Lexus LC 500"
-                className="w-full h-48 object-cover rounded-2xl mb-6"
-              />
-              <h4 className="text-2xl font-bold text-white mb-3">Lexus LC 500</h4>
-              <p className="text-gray-400 mb-4 leading-relaxed">
-                A grand tourer that blends luxury, performance, and timeless elegance.
-              </p>
-              <p className="text-3xl font-bold text-white mb-4">₱12,500,000</p>
-              <button
-                onClick={handleOrder}
-                className="w-full py-3 bg-white text-black rounded-xl hover:bg-gray-200 transition-all duration-300 font-semibold"
-              >
-                Order Now
-              </button>
-            </div>
+                <img
+                  src={car.image}
+                  alt={car.name}
+                  className="w-full h-48 object-cover rounded-xl mb-4 group-hover:opacity-90 transition-opacity"
+                />
+                <h4 className="text-xl font-bold text-white text-center">{car.name}</h4>
+              </div>
+            ))}
           </div>
         </div>
       </section>
@@ -248,6 +266,140 @@ const LandingPage = () => {
           © 2025 AutoLux Premium — Luxury Car Edition.
         </p>
       </footer>
+
+      {/* Car Details - Modal on Desktop, Bottom Sheet on Mobile */}
+      {!isMobile ? (
+        <Modal 
+          isOpen={selectedCar !== null} 
+          onClose={() => setSelectedCar(null)} 
+          title={selectedCar?.name || "Car Details"}
+        >
+          {selectedCar && (
+            <div className="space-y-6 max-h-[70vh] overflow-y-auto">
+              <img
+                src={selectedCar.image}
+                alt={selectedCar.name}
+                className="w-full h-48 md:h-64 object-cover rounded-lg"
+              />
+              <div className="space-y-4">
+                <p className="text-gray-300 text-base md:text-lg leading-relaxed">{selectedCar.description}</p>
+                <p className="text-2xl md:text-3xl font-bold text-white">₱{selectedCar.price.toLocaleString()}</p>
+                
+                <div className="space-y-3">
+                  <h4 className="text-lg md:text-xl font-semibold text-white border-b border-gray-700 pb-2">Specifications</h4>
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+                    {Object.entries(selectedCar.specs).map(([key, value]) => (
+                      <div key={key} className="bg-gray-800/50 p-3 rounded-lg border border-gray-700">
+                        <div className="text-gray-400 text-xs md:text-sm capitalize">
+                          {key.replace(/([A-Z])/g, ' $1').trim()}
+                        </div>
+                        <div className="text-white font-medium text-sm md:text-base mt-1">{value}</div>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+
+                {selectedCar.features && (
+                  <div className="space-y-3">
+                    <h4 className="text-lg md:text-xl font-semibold text-white border-b border-gray-700 pb-2">Premium Features</h4>
+                    <div className="flex flex-wrap gap-2">
+                      {selectedCar.features.map((feature, index) => (
+                        <span 
+                          key={index} 
+                          className="text-xs md:text-sm text-gray-200 bg-gradient-to-r from-gray-800 to-gray-700 px-3 py-2 rounded-lg border border-gray-600"
+                        >
+                          {feature}
+                        </span>
+                      ))}
+                    </div>
+                  </div>
+                )}
+                
+                <div className="flex gap-3 pt-4 border-t border-gray-700">
+                  <button
+                    onClick={handleOrder}
+                    className="flex-1 py-3 bg-white text-black rounded-lg hover:bg-gray-200 transition-all duration-300 font-semibold text-sm md:text-base"
+                  >
+                    Order Now
+                  </button>
+                  <button
+                    onClick={() => setSelectedCar(null)}
+                    className="flex-1 py-3 bg-gray-800 text-white rounded-lg hover:bg-gray-700 transition-all duration-300 font-semibold text-sm md:text-base border border-gray-600"
+                  >
+                    Close
+                  </button>
+                </div>
+              </div>
+            </div>
+          )}
+        </Modal>
+      ) : (
+        <SidePanel 
+          isOpen={selectedCar !== null} 
+          onClose={() => setSelectedCar(null)}
+          title={selectedCar?.name || "Car Details"}
+          isMobileBottomSheet={true}
+        >
+          {selectedCar && (
+            <div className="space-y-4">
+              <img
+                src={selectedCar.image}
+                alt={selectedCar.name}
+                className="w-full h-48 object-cover rounded-lg"
+              />
+              <div className="space-y-4">
+                <p className="text-gray-300 text-base leading-relaxed">{selectedCar.description}</p>
+                <p className="text-2xl font-bold text-white">₱{selectedCar.price.toLocaleString()}</p>
+                
+                <div className="space-y-3">
+                  <h4 className="text-lg font-semibold text-white border-b border-gray-700 pb-2">Specifications</h4>
+                  <div className="grid grid-cols-2 gap-2">
+                    {Object.entries(selectedCar.specs).map(([key, value]) => (
+                      <div key={key} className="bg-gray-800/50 p-2.5 rounded-lg border border-gray-700">
+                        <div className="text-gray-400 text-xs capitalize">
+                          {key.replace(/([A-Z])/g, ' $1').trim()}
+                        </div>
+                        <div className="text-white font-medium text-sm mt-1">{value}</div>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+
+                {selectedCar.features && (
+                  <div className="space-y-3">
+                    <h4 className="text-lg font-semibold text-white border-b border-gray-700 pb-2">Premium Features</h4>
+                    <div className="flex flex-wrap gap-2">
+                      {selectedCar.features.map((feature, index) => (
+                        <span 
+                          key={index} 
+                          className="text-xs text-gray-200 bg-gradient-to-r from-gray-800 to-gray-700 px-2.5 py-1.5 rounded-lg border border-gray-600"
+                        >
+                          {feature}
+                        </span>
+                      ))}
+                    </div>
+                  </div>
+                )}
+                
+                <div className="flex gap-3 pt-4 border-t border-gray-700 sticky bottom-0 bg-gray-900 pb-4">
+                  <button
+                    onClick={handleOrder}
+                    className="flex-1 py-3 bg-white text-black rounded-lg hover:bg-gray-200 transition-all duration-300 font-semibold"
+                  >
+                    Order Now
+                  </button>
+                  <button
+                    onClick={() => setSelectedCar(null)}
+                    className="flex-1 py-3 bg-gray-800 text-white rounded-lg hover:bg-gray-700 transition-all duration-300 font-semibold border border-gray-600"
+                  >
+                    Close
+                  </button>
+                </div>
+              </div>
+            </div>
+          )}
+        </SidePanel>
+      )}
     </div>
   );
 };
