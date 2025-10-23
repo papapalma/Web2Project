@@ -45,6 +45,11 @@ body, html {
     max-width: 100%;
     overflow-x: hidden;
   }
+
+  /* Space at bottom so fixed footer doesn't cover content */
+  .with-mobile-footer {
+    padding-bottom: 88px; /* footer height (64px) + some safe area */
+  }
 }
 
 /* Custom scrollbar for webkit browsers */

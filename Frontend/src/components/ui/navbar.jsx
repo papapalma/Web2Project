@@ -55,61 +55,92 @@ const NavBar = () => {
           </button>
         </div>
 
-        {/* Mobile Hamburger Button */}
-        <button
-          onClick={toggleMenu}
-          className="md:hidden flex flex-col justify-center items-center w-8 h-8 space-y-1.5 focus:outline-none"
-          aria-label="Toggle menu"
-        >
-          <span 
-            className={`w-6 h-0.5 bg-white transition-all duration-300 ${
-              isMenuOpen ? 'rotate-45 translate-y-2' : ''
-            }`}
-          ></span>
-          <span 
-            className={`w-6 h-0.5 bg-white transition-all duration-300 ${
-              isMenuOpen ? 'opacity-0' : ''
-            }`}
-          ></span>
-          <span 
-            className={`w-6 h-0.5 bg-white transition-all duration-300 ${
-              isMenuOpen ? '-rotate-45 -translate-y-2' : ''
-            }`}
-          ></span>
-        </button>
-      </div>
+        {/* Mobile footer nav (replaces hamburger) */}
+        <div className="md:hidden">
+          <div className="fixed bottom-0 left-0 right-0 bg-black border-t border-gray-800 z-50">
+            <div className="flex justify-around items-center h-16 px-2">
+              <button
+                onClick={() => handleNavigation('/')}
+                aria-label="Home"
+                className={`flex flex-col items-center text-white focus:outline-none"
+                  ${isCurrentPath('/') ? ' text-gray-300' : ''}`}
+              >
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" className="w-6 h-6">
+                  <path d="M3 9.75L12 3l9 6.75V21a1 1 0 0 1-1 1h-5v-6H9v6H4a1 1 0 0 1-1-1V9.75z" />
+                </svg>
+                <span className="text-xs mt-0.5">Home</span>
+              </button>
 
-      {/* Mobile Navigation Menu */}
-      <div 
-        className={`md:hidden bg-gray-900/95 backdrop-blur-sm border-t border-gray-700 transition-all duration-300 ${
-          isMenuOpen ? 'max-h-64 opacity-100' : 'max-h-0 opacity-0 overflow-hidden'
-        }`}
-      >
-        <div className="flex flex-col space-y-1 px-4 py-4">
-          <button
-            onClick={() => handleNavigation('/')}
-            className={`text-white hover:text-gray-300 hover:bg-gray-800/50 transition-all duration-200 font-medium text-lg py-3 px-4 rounded-lg text-left ${
-              isCurrentPath('/') ? 'bg-gray-800/50 text-gray-300' : ''
-            }`}
-          >
-            🏠 Home
-          </button>
-          <button
-            onClick={() => handleNavigation('/listing')}
-            className={`text-white hover:text-gray-300 hover:bg-gray-800/50 transition-all duration-200 font-medium text-lg py-3 px-4 rounded-lg text-left ${
-              isCurrentPath('/listing') ? 'bg-gray-800/50 text-gray-300' : ''
-            }`}
-          >
-            🚗 Cars
-          </button>
-          <button
-            onClick={() => handleNavigation('/order')}
-            className="bg-white text-black hover:bg-gray-200 transition-all duration-200 font-semibold text-lg py-3 px-4 rounded-lg text-center mt-2"
-          >
-            📋 Order Now
-          </button>
+              <button
+                onClick={() => handleNavigation('/listing')}
+                aria-label="Cars"
+                className={`flex flex-col items-center text-white focus:outline-none"
+                  ${isCurrentPath('/listing') ? ' text-gray-300' : ''}`}
+              >
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" className="w-6 h-6">
+                  <path d="M5 11l1.5-4h11L19 11v6a1 1 0 0 1-1 1h-1a1 1 0 0 1-1-1v-1H8v1a1 1 0 0 1-1 1H6a1 1 0 0 1-1-1v-6z" />
+                  <circle cx="7.5" cy="16.5" r="1.5" />
+                  <circle cx="16.5" cy="16.5" r="1.5" />
+                </svg>
+                <span className="text-xs mt-0.5">Cars</span>
+              </button>
+
+              <button
+                onClick={() => handleNavigation('/order')}
+                aria-label="Order"
+                className={`flex flex-col items-center text-white focus:outline-none"
+                  ${isCurrentPath('/order') ? ' text-gray-300' : ''}`}
+              >
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" className="w-6 h-6">
+                  <path d="M3 3h18v2H3V3zm2 6h14v10a1 1 0 0 1-1 1H6a1 1 0 0 1-1-1V9z" />
+                </svg>
+                <span className="text-xs mt-0.5">Order</span>
+              </button>
+
+              <button
+                onClick={toggleMenu}
+                aria-label="More"
+                className="flex flex-col items-center text-white focus:outline-none"
+              >
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" className="w-6 h-6">
+                  <path d="M12 8a2 2 0 110-4 2 2 0 010 4zm0 6a2 2 0 110-4 2 2 0 010 4zm0 6a2 2 0 110-4 2 2 0 010 4z" />
+                </svg>
+                <span className="text-xs mt-0.5">More</span>
+              </button>
+            </div>
+          </div>
         </div>
       </div>
+
+      {/* Mobile More Sheet (opened from footer 'More' button) */}
+      {isMenuOpen && (
+        <div className="md:hidden fixed left-4 right-4 bottom-20 bg-gray-900/95 backdrop-blur-sm border border-gray-700 rounded-xl transition-all duration-200 z-50">
+          <div className="flex flex-col space-y-2 px-4 py-4">
+            <button
+              onClick={() => handleNavigation('/')}
+              className={`text-white hover:text-gray-300 hover:bg-gray-800/50 transition-all duration-200 font-medium text-lg py-3 px-4 rounded-lg text-left ${
+                isCurrentPath('/') ? 'bg-gray-800/50 text-gray-300' : ''
+              }`}
+            >
+              🏠 Home
+            </button>
+            <button
+              onClick={() => handleNavigation('/listing')}
+              className={`text-white hover:text-gray-300 hover:bg-gray-800/50 transition-all duration-200 font-medium text-lg py-3 px-4 rounded-lg text-left ${
+                isCurrentPath('/listing') ? 'bg-gray-800/50 text-gray-300' : ''
+              }`}
+            >
+              🚗 Cars
+            </button>
+            <button
+              onClick={() => handleNavigation('/order')}
+              className="bg-white text-black hover:bg-gray-200 transition-all duration-200 font-semibold text-lg py-3 px-4 rounded-lg text-center mt-2"
+            >
+              📋 Order Now
+            </button>
+          </div>
+        </div>
+      )}
     </nav>
   );
 };

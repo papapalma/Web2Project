@@ -4,6 +4,8 @@ import PrimaryButton from '../../components/ui/primarybutton';
 import Card from '../../components/ui/card';
 import SearchBar from '../../components/ui/searchbar';
 import { useNavigation } from '../../hooks/useNavigation';
+import Modal from '../../components/ui/Modal';
+import SidePanel from '../../components/ui/SidePanel';
 
 const LandingPage = () => {
   const [searchTerm, setSearchTerm] = useState('');
@@ -28,10 +30,22 @@ const LandingPage = () => {
     }
   }, [navigateTo]);
 
+  // UI state for modal and side panel
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [isPanelOpen, setIsPanelOpen] = useState(false);
+
   return (
-    <div className="bg-black min-h-screen w-full text-white overflow-x-hidden">
+    <div className="bg-black min-h-screen w-full text-white overflow-x-hidden with-mobile-footer">
       {/* Navbar */}
       <NavBar />
+
+      {/* Demo controls for Modal and SidePanel */}
+      <div className="w-full px-4 md:px-8 lg:px-16 xl:px-24 mt-6">
+        <div className="max-w-5xl mx-auto flex gap-4">
+          <button onClick={() => setIsModalOpen(true)} className="px-4 py-2 bg-white text-black rounded-lg">Open Modal</button>
+          <button onClick={() => setIsPanelOpen(true)} className="px-4 py-2 bg-gray-800 text-white rounded-lg">Open Panel</button>
+        </div>
+      </div>
 
       {/* Hero Section */}
       <section className="w-full flex flex-col items-center justify-center px-4 md:px-8 lg:px-16 xl:px-24 py-12 md:py-16 lg:py-24 text-center bg-gradient-to-b from-black via-gray-900 to-black">
@@ -248,6 +262,20 @@ const LandingPage = () => {
           © 2025 AutoLux Premium — Luxury Car Edition.
         </p>
       </footer>
+
+      <Modal isOpen={isModalOpen} onClose={() => setIsModalOpen(false)} title="Sample Modal">
+        <p className="text-gray-300">This is a demo modal. Put any content here.</p>
+        <div className="mt-4">
+          <button onClick={() => setIsModalOpen(false)} className="px-4 py-2 bg-white text-black rounded-lg">Close</button>
+        </div>
+      </Modal>
+
+      <SidePanel isOpen={isPanelOpen} onClose={() => setIsPanelOpen(false)}>
+        <p className="text-gray-300">Panel content goes here. On mobile it opens from the bottom.</p>
+        <div className="mt-4">
+          <button onClick={() => setIsPanelOpen(false)} className="px-4 py-2 bg-white text-black rounded-lg">Close Panel</button>
+        </div>
+      </SidePanel>
     </div>
   );
 };
